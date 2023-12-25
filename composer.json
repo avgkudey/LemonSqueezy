@@ -1,0 +1,57 @@
+{
+    "name": "avgkudey/lemon-squeezy",
+    "description": "Laravel wrapper for Lemon Squeezy API",
+    "type": "library",
+    "require": {
+        "php": "~8.2.0|~8.3.0",
+        "guzzlehttp/guzzle": "^7.0",
+        "laravel/framework": "^10.0",
+        "laravel/prompts": "^0.1",
+        "moneyphp/money": "^4.0",
+        "nesbot/carbon": "^2.0",
+        "league/object-mapper": "dev-main"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.13",
+        "orchestra/testbench": "^8.0|^9.0",
+        "pestphp/pest": "^2.0",
+        "pestphp/pest-plugin-type-coverage": "^2.5",
+        "roave/security-advisories": "dev-latest"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Avgkudey\\LemonSqueezy\\": "src/"
+        }
+    },
+    "scripts": {
+        "pint": [
+            "./vendor/bin/pint"
+        ],
+        "types": [
+            "./vendor/bin/pest --type-coverage"
+        ],
+        "dump": [
+            "composer dump-autoload --optimize --classmap-authoritative --strict-psr"
+        ]
+    },
+    "authors": [
+        {
+            "name": "avgkudey",
+            "email": "40860028+avgkudey@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Avgkudey\\LemonSqueezy\\LemonSqueezyServiceProvider"
+            ]
+        }
+    }
+}
