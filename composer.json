@@ -1,7 +1,7 @@
 {
     "name": "avgkudey/lemon-squeezy",
+    "description": "Laravel wrapper for Lemon Squeezy API",
     "type": "library",
-    "version": "0.0.1",
     "require": {
         "php": "~8.2.0|~8.3.0",
         "guzzlehttp/guzzle": "^7.0",
