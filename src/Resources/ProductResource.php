@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Avgkudey\LemonSqueezy\Resources;
 
 use Avgkudey\LemonSqueezy\Contracts\DataObjectContract;
-use Avgkudey\LemonSqueezy\DataObjects\Store\Store;
+use Avgkudey\LemonSqueezy\DataObjects\Product\Product;
 use Avgkudey\LemonSqueezy\Enums\HTTP_METHOD;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanBeHydrated;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanUseHttp;
 use Throwable;
 
-final class StoreResource
+final class ProductResource
 {
     use CanBeHydrated;
     use CanUseHttp;
@@ -22,7 +22,7 @@ final class StoreResource
         try {
             $response = $this->buildRequest(
                 METHOD: HTTP_METHOD::GET->value,
-                URI: 'stores'
+                URI: 'products'
             );
             $data = $this->decodeResponse(response: $response);
         } catch (Throwable $exception) {
@@ -38,6 +38,7 @@ final class StoreResource
      */
     public function createDataObject(array $data): DataObjectContract
     {
-        return Store::fromResponse(data: $data);
+        return Product::fromResponse(data: $data);
     }
+
 }

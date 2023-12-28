@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Avgkudey\LemonSqueezy\DataObjects\Store;
+namespace Avgkudey\LemonSqueezy\DataObjects\Customer;
 
 use Avgkudey\LemonSqueezy\Contracts\DataObjectContract;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanBeHydrated;
 
-final readonly class Store implements DataObjectContract
+final readonly class Customer implements DataObjectContract
 {
     use CanBeHydrated;
 
     /**
      * @param string $type
      * @param string|int $id
-     * @param StoreAttributes $attributes
+     * @param CustomerAttributes $attributes
      */
     public function __construct(
-        public string          $type,
-        public string|int      $id,
-        public StoreAttributes $attributes
+        public string             $type,
+        public string|int         $id,
+        public CustomerAttributes $attributes
     ) {}
 
 
