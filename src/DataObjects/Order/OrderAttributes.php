@@ -35,9 +35,7 @@ final readonly class OrderAttributes
         public string     $discount_total_formatted,
         public string     $tax_formatted,
         public string     $total_formatted,
-    )
-    {
-    }
+    ) {}
 }
 
 

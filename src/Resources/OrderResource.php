@@ -6,7 +6,6 @@ namespace Avgkudey\LemonSqueezy\Resources;
 
 use Avgkudey\LemonSqueezy\Contracts\DataObjectContract;
 use Avgkudey\LemonSqueezy\DataObjects\Order\Order;
-use Avgkudey\LemonSqueezy\DataObjects\Product\Product;
 use Avgkudey\LemonSqueezy\Enums\HTTP_METHOD;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanBeHydrated;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanUseHttp;
