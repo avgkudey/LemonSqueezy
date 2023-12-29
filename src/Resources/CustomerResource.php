@@ -21,6 +21,8 @@ final class CustomerResource extends BaseResource
     use CanBeHydrated;
     use CanUseHttp;
 
+    protected string $end_point = 'customers';
+
 
 
     /**
@@ -30,12 +32,15 @@ final class CustomerResource extends BaseResource
     public function all(): Collection
     {
         try {
-            $response = $this->buildRequest(
-                METHOD: HTTP_METHOD::GET->value,
-                URI: 'customers'
+            return collect(
+                array_map(
+                    callback: fn(array $customer): DataObjectContract => $this->createDataObject($customer),
+                    array: $this->decodeResponse(response: $this->buildRequest(
+                        METHOD: HTTP_METHOD::GET->value,
+                        URI: $this->end_point
+                    ))['data']
+                )
             );
-            $data = $this->decodeResponse(response: $response);
-            return collect(array_map(callback: fn(array $customer): DataObjectContract => $this->createDataObject($customer), array: $data['data']));
         } catch (Throwable $exception) {
             if ( ! $this->throw_exceptions) {
                 return collect();
@@ -59,11 +64,14 @@ final class CustomerResource extends BaseResource
     public function find(string|int $id): Customer|null
     {
         try {
-            $response = $this->buildRequest(
-                METHOD: HTTP_METHOD::GET->value,
-                URI: "customers/{$id}"
+            return $this->createDataObject(
+                $this->decodeResponse(
+                    response: $this->buildRequest(
+                        METHOD: HTTP_METHOD::GET->value,
+                        URI: "{$this->end_point}/{$id}"
+                    )
+                )['data']
             );
-            return $this->createDataObject($this->decodeResponse(response: $response)['data']);
         } catch (Throwable $exception) {
 
             if ( ! $this->throw_exceptions) {
@@ -80,14 +88,6 @@ final class CustomerResource extends BaseResource
 
     }
 
-    /**
-     * @param array<string,array<string,mixed>> $data
-     * @return Customer
-     */
-    public function createDataObject(array $data): Customer
-    {
-        return Customer::fromResponse(data: $data);
-    }
 
     /**
      * @param array{
@@ -104,38 +104,44 @@ final class CustomerResource extends BaseResource
     {
 
         try {
-            $response = $this->buildRequest(METHOD: HTTP_METHOD::POST->value, URI: 'customers', PAYLOAD: [
-
-                'data' => [
-                    'type' => 'customers',
-                    'attributes' => Arr::only(array:$attributes, keys: [
-                        'name',
-                        'email',
-                        'city',
-                        'region',
-                        'country',
-                    ]),
-                    'relationships' => [
-                        'store' => [
-                            'data' => [
-                                'type' => 'stores',
-                                'id' => config('lemon-squeezy.storeId'),
+            $response = $this->buildRequest(
+                METHOD: HTTP_METHOD::POST->value,
+                URI: $this->end_point,
+                PAYLOAD: [
+                    'data' => [
+                        'type' => 'customers',
+                        'attributes' => Arr::only(array:$attributes, keys: [
+                            'name',
+                            'email',
+                            'city',
+                            'region',
+                            'country',
+                        ]),
+                        'relationships' => [
+                            'store' => [
+                                'data' => [
+                                    'type' => 'stores',
+                                    'id' => config('lemon-squeezy.storeId'),
+                                ],
                             ],
                         ],
                     ],
-                ],
-            ]);
+                ]
+            );
             $decoded = $this->decodeResponse(response: $response);
             if(isset($decoded['errors'])) {
                 if ( ! $this->throw_exceptions) {
                     return null;
                 }
 
-                throw new FailedToCreateCustomerException(message: $decoded['errors'][0]['detail'], code:(int) $decoded['errors'][0]['status']);
+                throw new FailedToCreateCustomerException(
+                    message: $decoded['errors'][0]['detail'],
+                    code:(int) $decoded['errors'][0]['status']
+                );
 
             }
 
-            return $this->createDataObject($this->decodeResponse(response: $response)['data']);
+            return $this->createDataObject($decoded['data']);
         } catch (Throwable $exception) {
             if ( ! $this->throw_exceptions) {
                 return null;
@@ -145,9 +151,21 @@ final class CustomerResource extends BaseResource
                 throw $exception;
             }
 
-            throw new FailedToCreateCustomerException(message: 'Failed to create customer', code: $exception->getCode(), previous: $exception);
+            throw new FailedToCreateCustomerException(
+                message: 'Failed to create customer',
+                code: $exception->getCode(),
+                previous: $exception
+            );
         }
 
+    }
+    /**
+     * @param array<string,array<string,mixed>> $data
+     * @return Customer
+     */
+    public function createDataObject(array $data): Customer
+    {
+        return Customer::fromResponse(data: $data);
     }
 
 }
