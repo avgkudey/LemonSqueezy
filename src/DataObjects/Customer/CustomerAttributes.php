@@ -41,7 +41,7 @@ final readonly class CustomerAttributes
         public string|null       $country_formatted,
         public string|null       $total_revenue_currency_formatted,
         public string|null       $mrr_formatted,
-        public CustomerUrls             $urls,
+        public CustomerUrls      $urls,
         public DateTimeImmutable $created_at,
         public DateTimeImmutable $updated_at,
         public bool              $test_mode,

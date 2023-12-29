@@ -17,6 +17,7 @@ class LemonSqueezy
     {
         return new StoreResource();
     }
+
     public static function orders(): OrderResource
     {
         return new OrderResource();

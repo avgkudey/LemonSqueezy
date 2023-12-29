@@ -17,8 +17,8 @@ final readonly class Order implements DataObjectContract
      * @param OrderAttributes $attributes
      */
     public function __construct(
-        public string            $type,
-        public string|int        $id,
+        public string          $type,
+        public string|int      $id,
         public OrderAttributes $attributes,
     ) {}
 

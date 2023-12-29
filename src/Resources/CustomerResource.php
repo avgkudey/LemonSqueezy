@@ -4,89 +4,18 @@ declare(strict_types=1);
 
 namespace Avgkudey\LemonSqueezy\Resources;
 
-use Avgkudey\LemonSqueezy\Contracts\DataObjectContract;
 use Avgkudey\LemonSqueezy\DataObjects\Customer\Customer;
 use Avgkudey\LemonSqueezy\Enums\HTTP_METHOD;
 use Avgkudey\LemonSqueezy\Exceptions\Customer\FailedToCreateCustomerException;
 use Avgkudey\LemonSqueezy\Exceptions\Customer\FailedToFetchAllCustomersException;
 use Avgkudey\LemonSqueezy\Exceptions\Customer\FailedToFindCustomerException;
-use Avgkudey\LemonSqueezy\Resources\Concerns\CanBeHydrated;
-use Avgkudey\LemonSqueezy\Resources\Concerns\CanUseHttp;
+use Exception;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
+use Override;
 use Throwable;
 
 final class CustomerResource extends BaseResource
 {
-    use CanBeHydrated;
-    use CanUseHttp;
-
-    protected string $end_point = 'customers';
-
-
-
-    /**
-     * @return Collection<int,Customer>
-     * @throws FailedToFetchAllCustomersException
-     */
-    public function all(): Collection
-    {
-        try {
-            return collect(
-                array_map(
-                    callback: fn(array $customer): DataObjectContract => $this->createDataObject($customer),
-                    array: $this->decodeResponse(response: $this->buildRequest(
-                        METHOD: HTTP_METHOD::GET->value,
-                        URI: $this->end_point
-                    ))['data']
-                )
-            );
-        } catch (Throwable $exception) {
-            if ( ! $this->throw_exceptions) {
-                return collect();
-            }
-
-            throw new FailedToFetchAllCustomersException(
-                message: "Failed to fetch all customers",
-                code: $exception->getCode(),
-                previous: $exception
-            );
-        }
-
-    }
-
-
-    /**
-     * @param string|int $id
-     * @return Customer|null
-     * @throws FailedToFindCustomerException
-     */
-    public function find(string|int $id): Customer|null
-    {
-        try {
-            return $this->createDataObject(
-                $this->decodeResponse(
-                    response: $this->buildRequest(
-                        METHOD: HTTP_METHOD::GET->value,
-                        URI: "{$this->end_point}/{$id}"
-                    )
-                )['data']
-            );
-        } catch (Throwable $exception) {
-
-            if ( ! $this->throw_exceptions) {
-                return null;
-            }
-
-            throw new FailedToFindCustomerException(
-                message: 'Failed to find customer exception',
-                code: $exception->getCode(),
-                previous: $exception
-            );
-        }
-    }
-
-
     /**
      * @param array{
      *     name:string,
@@ -104,11 +33,11 @@ final class CustomerResource extends BaseResource
         try {
             $response = $this->buildRequest(
                 METHOD: HTTP_METHOD::POST->value,
-                URI: $this->end_point,
+                URI: $this->endPoint(),
                 PAYLOAD: [
                     'data' => [
                         'type' => 'customers',
-                        'attributes' => Arr::only(array:$attributes, keys: [
+                        'attributes' => Arr::only(array: $attributes, keys: [
                             'name',
                             'email',
                             'city',
@@ -127,14 +56,14 @@ final class CustomerResource extends BaseResource
                 ]
             );
             $decoded = $this->decodeResponse(response: $response);
-            if(isset($decoded['errors'])) {
+            if (isset($decoded['errors'])) {
                 if ( ! $this->throw_exceptions) {
                     return null;
                 }
 
                 throw new FailedToCreateCustomerException(
                     message: $decoded['errors'][0]['detail'],
-                    code:(int) $decoded['errors'][0]['status']
+                    code: (int)$decoded['errors'][0]['status']
                 );
 
             }
@@ -145,7 +74,7 @@ final class CustomerResource extends BaseResource
                 return null;
             }
 
-            if($exception instanceof FailedToCreateCustomerException) {
+            if ($exception instanceof FailedToCreateCustomerException) {
                 throw $exception;
             }
 
@@ -157,6 +86,7 @@ final class CustomerResource extends BaseResource
         }
 
     }
+
     /**
      * @param array<string,array<string,mixed>> $data
      * @return Customer
@@ -167,31 +97,48 @@ final class CustomerResource extends BaseResource
     }
 
     /**
-     * @return Collection<int,Customer>
-     * @throws FailedToFetchAllCustomersException
+     * @param Throwable $exception
+     * @return FailedToFindCustomerException
      */
-    public function get(): Collection
+    public function failedToFindException(Throwable $exception): FailedToFindCustomerException
     {
-        try {
-            return collect(
-                array_map(
-                    callback: fn(array $customer): DataObjectContract => $this->createDataObject($customer),
-                    array: $this->decodeResponse(response: $this->buildRequest(
-                        METHOD: HTTP_METHOD::GET->value,
-                        URI: $this->end_point . $this->formatFilters()
-                    ))['data']
-                )
-            );
-        } catch (Throwable $exception) {
-            if ( ! $this->throw_exceptions) {
-                return collect();
-            }
+        return new FailedToFindCustomerException(
+            message: 'Failed to find customer',
+            code: $exception->getCode(),
+            previous: $exception
+        );
+    }
 
-            throw new FailedToFetchAllCustomersException(
-                message: "Failed to fetch all customers",
-                code: $exception->getCode(),
-                previous: $exception
-            );
-        }
+    /**
+     * @param Throwable $exception
+     * @return FailedToFetchAllCustomersException
+     */
+    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllCustomersException
+    {
+        return new FailedToFetchAllCustomersException(
+            message: "Failed to fetch all customers",
+            code: $exception->getCode(),
+            previous: $exception
+        );
+    }
+
+    /**
+     * @param int|string $id
+     * @return Customer|null
+     * @throws FailedToFindCustomerException
+     * @throws Exception
+     */
+    #[Override]
+    public function find(int|string $id): Customer|null
+    {
+        return parent::find($id);
+    }
+
+    /**
+     * @return string
+     */
+    protected function endPoint(): string
+    {
+        return 'customers';
     }
 }

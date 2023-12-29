@@ -4,22 +4,34 @@ declare(strict_types=1);
 
 namespace Avgkudey\LemonSqueezy\Resources;
 
+use Avgkudey\LemonSqueezy\Contracts\DataObjectContract;
+use Avgkudey\LemonSqueezy\Enums\HTTP_METHOD;
+use Avgkudey\LemonSqueezy\Resources\Concerns\CanBeHydrated;
+use Avgkudey\LemonSqueezy\Resources\Concerns\CanUseHttp;
+use Exception;
 use Illuminate\Support\Collection;
+use Throwable;
 
 abstract class BaseResource
 {
+    use CanBeHydrated;
+    use CanUseHttp;
+
     protected bool $throw_exceptions = true;
-    protected Collection $filters ;
+    protected Collection $filters;
 
     public function __construct()
     {
         $this->filters = collect();
     }
 
-    /**
-     * @return Collection<int,mixed>
-     */
-    abstract public function get(): Collection;
+    abstract protected function createDataObject(array $data): DataObjectContract;
+
+    abstract protected function endPoint(): string;
+
+    abstract protected function failedToFetchAllException(Throwable $exception): Exception;
+
+    abstract protected function failedToFindException(Throwable $exception): Exception;
 
     public function withoutExceptionThrowing(): self
     {
@@ -45,11 +57,36 @@ abstract class BaseResource
     }
 
     /**
+     * @return Collection<int,DataObjectContract>
+     * @throws Exception
+     */
+    public function get(): Collection
+    {
+        try {
+            return collect(
+                value: array_map(
+                    callback: fn(array $item): DataObjectContract => $this->createDataObject($item),
+                    array: $this->decodeResponse(response: $this->buildRequest(
+                        METHOD: HTTP_METHOD::GET->value,
+                        URI: $this->endPoint() . $this->formatFilters()
+                    ))['data']
+                )
+            );
+        } catch (Throwable $exception) {
+            if ( ! $this->throw_exceptions) {
+                return collect();
+            }
+
+            throw $this->failedToFetchAllException($exception);
+        }
+    }
+
+    /**
      * @return string
      */
     public function formatFilters(): string
     {
-        if(0 === $this->filters->count()) {
+        if (0 === $this->filters->count()) {
             return '';
         }
 
@@ -60,6 +97,58 @@ abstract class BaseResource
         });
 
         return $formatted;
+    }
+
+    /**
+     * @return Collection<int,DataObjectContract>
+     * @throws Exception
+     */
+    public function all(): Collection
+    {
+        try {
+            return collect(
+                array_map(
+                    callback: fn(array $customer): DataObjectContract => $this->createDataObject($customer),
+                    array: $this->decodeResponse(response: $this->buildRequest(
+                        METHOD: HTTP_METHOD::GET->value,
+                        URI: $this->endPoint()
+                    ))['data']
+                )
+            );
+        } catch (Throwable $exception) {
+            if ( ! $this->throw_exceptions) {
+                return collect();
+            }
+
+            throw $this->failedToFetchAllException($exception);
+        }
+
+    }
+
+    /**
+     * @param string|int $id
+     * @return DataObjectContract|null
+     * @throws Exception
+     */
+    public function find(string|int $id): DataObjectContract|null
+    {
+        try {
+            return $this->createDataObject(
+                $this->decodeResponse(
+                    response: $this->buildRequest(
+                        METHOD: HTTP_METHOD::GET->value,
+                        URI: "{$this->endPoint()}/{$id}"
+                    )
+                )['data']
+            );
+        } catch (Throwable $exception) {
+
+            if ( ! $this->throw_exceptions) {
+                return null;
+            }
+
+            throw $this->failedToFindException($exception);
+        }
     }
 
 }

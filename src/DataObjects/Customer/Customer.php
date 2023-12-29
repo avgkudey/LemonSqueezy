@@ -21,11 +21,11 @@ final readonly class Customer implements DataObjectContract
      * } $links
      */
     public function __construct(
-        public string             $type,
-        public string|int         $id,
-        public CustomerAttributes $attributes,
+        public string                $type,
+        public string|int            $id,
+        public CustomerAttributes    $attributes,
         public CustomerRelationships $relationships,
-        public array $links
+        public array                 $links
     ) {}
 
 

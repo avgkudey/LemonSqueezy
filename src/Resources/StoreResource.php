@@ -4,84 +4,15 @@ declare(strict_types=1);
 
 namespace Avgkudey\LemonSqueezy\Resources;
 
-use Avgkudey\LemonSqueezy\Contracts\DataObjectContract;
 use Avgkudey\LemonSqueezy\DataObjects\Store\Store;
-use Avgkudey\LemonSqueezy\Enums\HTTP_METHOD;
 use Avgkudey\LemonSqueezy\Exceptions\Store\FailedToFetchAllStoresException;
 use Avgkudey\LemonSqueezy\Exceptions\Store\FailedToFindStoreException;
-use Avgkudey\LemonSqueezy\Resources\Concerns\CanBeHydrated;
-use Avgkudey\LemonSqueezy\Resources\Concerns\CanUseHttp;
-use Illuminate\Support\Collection;
+use Exception;
+use Override;
 use Throwable;
 
 final class StoreResource extends BaseResource
 {
-    use CanBeHydrated;
-    use CanUseHttp;
-
-    protected string $end_point = 'stores';
-
-    /**
-     * @return Collection<int,Store>
-     * @throws FailedToFetchAllStoresException
-     */
-    public function all(): Collection
-    {
-        try {
-            return collect(
-                array_map(
-                    callback: fn(array $store): DataObjectContract => $this->createDataObject($store),
-                    array: $this->decodeResponse(response: $this->buildRequest(
-                        METHOD: HTTP_METHOD::GET->value,
-                        URI: $this->end_point
-                    ))['data']
-                )
-            );
-
-        } catch (Throwable $exception) {
-            if ( ! $this->throw_exceptions) {
-                return collect();
-            }
-
-            throw new FailedToFetchAllStoresException(
-                message: "Failed to fetch all stores",
-                code: $exception->getCode(),
-                previous: $exception
-            );
-        }
-
-    }
-    /**
-     * @param string|int $id
-     * @return Store|null
-     * @throws FailedToFindStoreException
-     */
-    public function find(string|int $id): Store|null
-    {
-        try {
-            return $this->createDataObject(
-                $this->decodeResponse(response: $this->buildRequest(
-                    METHOD: HTTP_METHOD::GET->value,
-                    URI: "{$this->end_point}/{$id}"
-                ))['data']
-            );
-        } catch (Throwable $exception) {
-
-            if ( ! $this->throw_exceptions) {
-                return null;
-            }
-
-            throw new FailedToFindStoreException(
-                message: 'Failed to find store exception',
-                code: $exception->getCode(),
-                previous: $exception
-            );
-        }
-
-
-    }
-
-
     /**
      * @param array<string,array<string,mixed>> $data
      * @return Store
@@ -91,32 +22,39 @@ final class StoreResource extends BaseResource
         return Store::fromResponse(data: $data);
     }
 
-    /**
-     * @return Collection<int,Store>
-     * @throws FailedToFetchAllStoresException
-     */
-    public function get(): Collection
+    public function failedToFindException(Throwable $exception): FailedToFindStoreException
     {
-        try {
-            return collect(
-                array_map(
-                    callback: fn(array $order): DataObjectContract => $this->createDataObject($order),
-                    array: $this->decodeResponse(response: $this->buildRequest(
-                        METHOD: HTTP_METHOD::GET->value,
-                        URI: $this->end_point . $this->formatFilters()
-                    ))['data']
-                )
-            );
-        } catch (Throwable $exception) {
-            if ( ! $this->throw_exceptions) {
-                return collect();
-            }
-
-            throw new FailedToFetchAllStoresException(
-                message: "Failed to fetch all stores",
-                code: $exception->getCode(),
-                previous: $exception
-            );
-        }
+        return new FailedToFindStoreException(
+            message: 'Failed to find store',
+            code: $exception->getCode(),
+            previous: $exception
+        );
     }
+
+    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllStoresException
+    {
+        return new FailedToFetchAllStoresException(
+            message: "Failed to fetch all stores",
+            code: $exception->getCode(),
+            previous: $exception
+        );
+    }
+
+    /**
+     * @param int|string $id
+     * @return Store|null
+     * @throws FailedToFindStoreException
+     * @throws Exception
+     */
+    #[Override]
+    public function find(int|string $id): Store|null
+    {
+        return parent::find($id);
+    }
+
+    protected function endPoint(): string
+    {
+        return 'stores';
+    }
+
 }
