@@ -6,4 +6,4 @@ namespace Avgkudey\LemonSqueezy\Exceptions\Customer;
 
 use Exception;
 
-class FailedToFindAllCustomerException extends Exception {}
+class FailedToFindCustomerException extends Exception {}

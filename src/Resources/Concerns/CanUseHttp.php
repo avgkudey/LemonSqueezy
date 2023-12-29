@@ -19,14 +19,11 @@ trait CanUseHttp
      */
     public function buildRequest(string $METHOD, string $URI, array $PAYLOAD = []): PromiseInterface|Response
     {
-
         return Http::withToken(config('lemon-squeezy.apiKey'))
             ->withUserAgent('Avgkudey-LemonSqueezy;' . LemonSqueezy::VERSION)
             ->accept('application/vnd.api+json')
             ->contentType('application/vnd.api+json')
             ->{$METHOD}(config('lemon-squeezy.baseUrl') . "/{$URI}", $PAYLOAD);
-
-
     }
 
     /**

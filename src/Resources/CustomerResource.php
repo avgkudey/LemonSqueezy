@@ -7,26 +7,20 @@ namespace Avgkudey\LemonSqueezy\Resources;
 use Avgkudey\LemonSqueezy\Contracts\DataObjectContract;
 use Avgkudey\LemonSqueezy\DataObjects\Customer\Customer;
 use Avgkudey\LemonSqueezy\Enums\HTTP_METHOD;
+use Avgkudey\LemonSqueezy\Exceptions\Customer\FailedToCreateCustomerException;
 use Avgkudey\LemonSqueezy\Exceptions\Customer\FailedToFetchAllCustomersException;
-use Avgkudey\LemonSqueezy\Exceptions\Customer\FailedToFindAllCustomerException;
+use Avgkudey\LemonSqueezy\Exceptions\Customer\FailedToFindCustomerException;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanBeHydrated;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanUseHttp;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Throwable;
 
-final class CustomerResource
+final class CustomerResource extends BaseResource
 {
     use CanBeHydrated;
     use CanUseHttp;
 
-    private bool $throw_exceptions = true;
-
-
-    public function withoutExceptionThrowing(): CustomerResource
-    {
-        $this->throw_exceptions = false;
-        return $this;
-    }
 
 
     /**
@@ -60,7 +54,7 @@ final class CustomerResource
     /**
      * @param string|int $id
      * @return Customer|null
-     * @throws FailedToFindAllCustomerException
+     * @throws FailedToFindCustomerException
      */
     public function find(string|int $id): Customer|null
     {
@@ -76,7 +70,7 @@ final class CustomerResource
                 return null;
             }
 
-            throw new FailedToFindAllCustomerException(
+            throw new FailedToFindCustomerException(
                 message: 'Failed to find customer exception',
                 code: $exception->getCode(),
                 previous: $exception
@@ -95,9 +89,65 @@ final class CustomerResource
         return Customer::fromResponse(data: $data);
     }
 
-    public function create(): void
+    /**
+     * @param array{
+     *     name:string,
+     *     email:string,
+     *     city:string|null,
+     *     region:string|null,
+     *     country:string|null
+     * } $attributes
+     * @return Customer|null
+     * @throws FailedToCreateCustomerException
+     */
+    public function create(array $attributes): Customer|null
     {
-        //       TODO
+
+        try {
+            $response = $this->buildRequest(METHOD: HTTP_METHOD::POST->value, URI: 'customers', PAYLOAD: [
+
+                'data' => [
+                    'type' => 'customers',
+                    'attributes' => Arr::only(array:$attributes, keys: [
+                        'name',
+                        'email',
+                        'city',
+                        'region',
+                        'country',
+                    ]),
+                    'relationships' => [
+                        'store' => [
+                            'data' => [
+                                'type' => 'stores',
+                                'id' => config('lemon-squeezy.storeId'),
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+            $decoded = $this->decodeResponse(response: $response);
+            if(isset($decoded['errors'])) {
+                if ( ! $this->throw_exceptions) {
+                    return null;
+                }
+
+                throw new FailedToCreateCustomerException(message: $decoded['errors'][0]['detail'], code:(int) $decoded['errors'][0]['status']);
+
+            }
+
+            return $this->createDataObject($this->decodeResponse(response: $response)['data']);
+        } catch (Throwable $exception) {
+            if ( ! $this->throw_exceptions) {
+                return null;
+            }
+
+            if($exception instanceof FailedToCreateCustomerException) {
+                throw $exception;
+            }
+
+            throw new FailedToCreateCustomerException(message: 'Failed to create customer', code: $exception->getCode(), previous: $exception);
+        }
+
     }
 
 }

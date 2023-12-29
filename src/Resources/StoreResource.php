@@ -11,7 +11,7 @@ use Avgkudey\LemonSqueezy\Resources\Concerns\CanBeHydrated;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanUseHttp;
 use Throwable;
 
-final class StoreResource
+final class StoreResource extends BaseResource
 {
     use CanBeHydrated;
     use CanUseHttp;
