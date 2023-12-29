@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Avgkudey\LemonSqueezy\Resources;
 
 use Avgkudey\LemonSqueezy\Contracts\DataObjectContract;
-use Avgkudey\LemonSqueezy\DataObjects\Customer\Customer;
+use Avgkudey\LemonSqueezy\DataObjects\Order\Order;
+use Avgkudey\LemonSqueezy\DataObjects\Product\Product;
 use Avgkudey\LemonSqueezy\Enums\HTTP_METHOD;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanBeHydrated;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanUseHttp;
 use Throwable;
 
-final class CustomerResource
+final class OrderResource
 {
     use CanBeHydrated;
     use CanUseHttp;
@@ -22,7 +23,7 @@ final class CustomerResource
         try {
             $response = $this->buildRequest(
                 METHOD: HTTP_METHOD::GET->value,
-                URI: 'customers'
+                URI: 'orders'
             );
             $data = $this->decodeResponse(response: $response);
         } catch (Throwable $exception) {
@@ -31,33 +32,14 @@ final class CustomerResource
         return array_map(callback: fn(array $store): DataObjectContract => $this->createDataObject($store), array: $data['data']);
 
     }
-    public function find(string|int $id): Customer
-    {
-        try {
-            $response = $this->buildRequest(
-                METHOD: HTTP_METHOD::GET->value,
-                URI: "customers/{$id}"
-            );
-            return $this->createDataObject($this->decodeResponse(response: $response)['data']);
-        } catch (Throwable $exception) {
-            throw $exception;
-        }
-
-
-    }
 
     /**
      * @param array<string,array<string,mixed>> $data
-     * @return Customer
+     * @return Order
      */
-    public function createDataObject(array $data): Customer
+    public function createDataObject(array $data): Order
     {
-        return Customer::fromResponse(data: $data);
-    }
-
-    public function create(): void
-    {
-        //       TODO
+        return Order::fromResponse(data: $data);
     }
 
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avgkudey\LemonSqueezy;
 
 use Avgkudey\LemonSqueezy\Resources\CustomerResource;
+use Avgkudey\LemonSqueezy\Resources\OrderResource;
 use Avgkudey\LemonSqueezy\Resources\ProductResource;
 use Avgkudey\LemonSqueezy\Resources\StoreResource;
 
@@ -15,6 +16,10 @@ class LemonSqueezy
     public static function stores(): StoreResource
     {
         return new StoreResource();
+    }
+    public static function orders(): OrderResource
+    {
+        return new OrderResource();
     }
 
     public static function customers(): CustomerResource

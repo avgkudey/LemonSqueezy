@@ -22,9 +22,7 @@ final readonly class CustomerAttributes
      * @param string|null $country_formatted
      * @param string|null $total_revenue_currency_formatted
      * @param string|null $mrr_formatted
-     * @param array{
-     *     customer_portal:string|null
-     * } $urls
+     * @param CustomerUrls $urls
      * @param DateTimeImmutable $created_at
      * @param DateTimeImmutable $updated_at
      * @param bool $test_mode
@@ -43,7 +41,7 @@ final readonly class CustomerAttributes
         public string|null       $country_formatted,
         public string|null       $total_revenue_currency_formatted,
         public string|null       $mrr_formatted,
-        public array             $urls,
+        public CustomerUrls             $urls,
         public DateTimeImmutable $created_at,
         public DateTimeImmutable $updated_at,
         public bool              $test_mode,
