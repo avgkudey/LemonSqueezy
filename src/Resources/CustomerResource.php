@@ -11,6 +11,7 @@ use Avgkudey\LemonSqueezy\Exceptions\Customer\FailedToFetchAllCustomersException
 use Avgkudey\LemonSqueezy\Exceptions\Customer\FailedToFindAllCustomerException;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanBeHydrated;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanUseHttp;
+use Illuminate\Support\Collection;
 use Throwable;
 
 final class CustomerResource
@@ -18,11 +19,21 @@ final class CustomerResource
     use CanBeHydrated;
     use CanUseHttp;
 
+    private bool $throw_exceptions = true;
+
+
+    public function withoutExceptionThrowing(): CustomerResource
+    {
+        $this->throw_exceptions = false;
+        return $this;
+    }
+
 
     /**
+     * @return Collection<int,Customer>
      * @throws FailedToFetchAllCustomersException
      */
-    public function all(): array
+    public function all(): Collection
     {
         try {
             $response = $this->buildRequest(
@@ -30,8 +41,12 @@ final class CustomerResource
                 URI: 'customers'
             );
             $data = $this->decodeResponse(response: $response);
-            return array_map(callback: fn(array $customer): DataObjectContract => $this->createDataObject($customer), array: $data['data']);
+            return collect(array_map(callback: fn(array $customer): DataObjectContract => $this->createDataObject($customer), array: $data['data']));
         } catch (Throwable $exception) {
+            if ( ! $this->throw_exceptions) {
+                return collect();
+            }
+
             throw new FailedToFetchAllCustomersException(
                 message: "Failed to fetch all customers",
                 code: $exception->getCode(),
@@ -41,10 +56,13 @@ final class CustomerResource
 
     }
 
+
     /**
+     * @param string|int $id
+     * @return Customer|null
      * @throws FailedToFindAllCustomerException
      */
-    public function find(string|int $id): Customer
+    public function find(string|int $id): Customer|null
     {
         try {
             $response = $this->buildRequest(
@@ -53,6 +71,11 @@ final class CustomerResource
             );
             return $this->createDataObject($this->decodeResponse(response: $response)['data']);
         } catch (Throwable $exception) {
+
+            if ( ! $this->throw_exceptions) {
+                return null;
+            }
+
             throw new FailedToFindAllCustomerException(
                 message: 'Failed to find customer exception',
                 code: $exception->getCode(),
