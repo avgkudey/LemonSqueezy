@@ -31,6 +31,19 @@ final class OrderResource
         return array_map(callback: fn(array $store): DataObjectContract => $this->createDataObject($store), array: $data['data']);
 
     }
+    public function find(int|string $id): Order
+    {
+        try {
+            $response = $this->buildRequest(
+                METHOD: HTTP_METHOD::GET->value,
+                URI: "orders/{$id}"
+            );
+
+            return $this->createDataObject($this->decodeResponse(response: $response)['data']);
+        } catch (Throwable $exception) {
+            throw $exception;
+        }
+    }
 
     /**
      * @param array<string,array<string,mixed>> $data

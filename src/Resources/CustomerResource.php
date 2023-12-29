@@ -7,6 +7,8 @@ namespace Avgkudey\LemonSqueezy\Resources;
 use Avgkudey\LemonSqueezy\Contracts\DataObjectContract;
 use Avgkudey\LemonSqueezy\DataObjects\Customer\Customer;
 use Avgkudey\LemonSqueezy\Enums\HTTP_METHOD;
+use Avgkudey\LemonSqueezy\Exceptions\Customer\FailedToFetchAllCustomersException;
+use Avgkudey\LemonSqueezy\Exceptions\Customer\FailedToFindAllCustomerException;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanBeHydrated;
 use Avgkudey\LemonSqueezy\Resources\Concerns\CanUseHttp;
 use Throwable;
@@ -17,6 +19,9 @@ final class CustomerResource
     use CanUseHttp;
 
 
+    /**
+     * @throws FailedToFetchAllCustomersException
+     */
     public function all(): array
     {
         try {
@@ -25,12 +30,20 @@ final class CustomerResource
                 URI: 'customers'
             );
             $data = $this->decodeResponse(response: $response);
+            return array_map(callback: fn(array $customer): DataObjectContract => $this->createDataObject($customer), array: $data['data']);
         } catch (Throwable $exception) {
-            throw $exception;
+            throw new FailedToFetchAllCustomersException(
+                message: "Failed to fetch all customers",
+                code: $exception->getCode(),
+                previous: $exception
+            );
         }
-        return array_map(callback: fn(array $store): DataObjectContract => $this->createDataObject($store), array: $data['data']);
 
     }
+
+    /**
+     * @throws FailedToFindAllCustomerException
+     */
     public function find(string|int $id): Customer
     {
         try {
@@ -40,7 +53,11 @@ final class CustomerResource
             );
             return $this->createDataObject($this->decodeResponse(response: $response)['data']);
         } catch (Throwable $exception) {
-            throw $exception;
+            throw new FailedToFindAllCustomerException(
+                message: 'Failed to find customer exception',
+                code: $exception->getCode(),
+                previous: $exception
+            );
         }
 
 
