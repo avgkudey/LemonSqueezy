@@ -90,4 +90,33 @@ final class StoreResource extends BaseResource
     {
         return Store::fromResponse(data: $data);
     }
+
+    /**
+     * @return Collection<int,Store>
+     * @throws FailedToFetchAllStoresException
+     */
+    public function get(): Collection
+    {
+        try {
+            return collect(
+                array_map(
+                    callback: fn(array $order): DataObjectContract => $this->createDataObject($order),
+                    array: $this->decodeResponse(response: $this->buildRequest(
+                        METHOD: HTTP_METHOD::GET->value,
+                        URI: $this->end_point . $this->formatFilters()
+                    ))['data']
+                )
+            );
+        } catch (Throwable $exception) {
+            if ( ! $this->throw_exceptions) {
+                return collect();
+            }
+
+            throw new FailedToFetchAllStoresException(
+                message: "Failed to fetch all stores",
+                code: $exception->getCode(),
+                previous: $exception
+            );
+        }
+    }
 }

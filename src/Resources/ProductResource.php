@@ -90,4 +90,33 @@ final class ProductResource extends BaseResource
         return Product::fromResponse(data: $data);
     }
 
+
+    /**
+     * @return Collection<int,Product>
+     * @throws FailedToFetchAllProductsException
+     */
+    public function get(): Collection
+    {
+        try {
+            return collect(
+                array_map(
+                    callback: fn(array $product): DataObjectContract => $this->createDataObject($product),
+                    array: $this->decodeResponse(response: $this->buildRequest(
+                        METHOD: HTTP_METHOD::GET->value,
+                        URI: $this->end_point . $this->formatFilters()
+                    ))['data']
+                )
+            );
+        } catch (Throwable $exception) {
+            if ( ! $this->throw_exceptions) {
+                return collect();
+            }
+
+            throw new FailedToFetchAllProductsException(
+                message: "Failed to fetch all products",
+                code: $exception->getCode(),
+                previous: $exception
+            );
+        }
+    }
 }

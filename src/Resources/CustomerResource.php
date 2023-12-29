@@ -84,8 +84,6 @@ final class CustomerResource extends BaseResource
                 previous: $exception
             );
         }
-
-
     }
 
 
@@ -168,4 +166,32 @@ final class CustomerResource extends BaseResource
         return Customer::fromResponse(data: $data);
     }
 
+    /**
+     * @return Collection<int,Customer>
+     * @throws FailedToFetchAllCustomersException
+     */
+    public function get(): Collection
+    {
+        try {
+            return collect(
+                array_map(
+                    callback: fn(array $customer): DataObjectContract => $this->createDataObject($customer),
+                    array: $this->decodeResponse(response: $this->buildRequest(
+                        METHOD: HTTP_METHOD::GET->value,
+                        URI: $this->end_point . $this->formatFilters()
+                    ))['data']
+                )
+            );
+        } catch (Throwable $exception) {
+            if ( ! $this->throw_exceptions) {
+                return collect();
+            }
+
+            throw new FailedToFetchAllCustomersException(
+                message: "Failed to fetch all customers",
+                code: $exception->getCode(),
+                previous: $exception
+            );
+        }
+    }
 }

@@ -87,4 +87,32 @@ final class OrderResource extends BaseResource
         return Order::fromResponse(data: $data);
     }
 
+    /**
+     * @return Collection<int,Order>
+     * @throws FailedToFetchAllOrdersException
+     */
+    public function get(): Collection
+    {
+        try {
+            return collect(
+                array_map(
+                    callback: fn(array $order): DataObjectContract => $this->createDataObject($order),
+                    array: $this->decodeResponse(response: $this->buildRequest(
+                        METHOD: HTTP_METHOD::GET->value,
+                        URI: $this->end_point . $this->formatFilters()
+                    ))['data']
+                )
+            );
+        } catch (Throwable $exception) {
+            if ( ! $this->throw_exceptions) {
+                return collect();
+            }
+
+            throw new FailedToFetchAllOrdersException(
+                message: "Failed to fetch all orders",
+                code: $exception->getCode(),
+                previous: $exception
+            );
+        }
+    }
 }
