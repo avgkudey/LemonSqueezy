@@ -8,6 +8,7 @@ use Avgkudey\LemonSqueezy\Resources\CustomerResource;
 use Avgkudey\LemonSqueezy\Resources\OrderResource;
 use Avgkudey\LemonSqueezy\Resources\ProductResource;
 use Avgkudey\LemonSqueezy\Resources\StoreResource;
+use Avgkudey\LemonSqueezy\Resources\VariantResource;
 
 class LemonSqueezy
 {
@@ -31,6 +32,10 @@ class LemonSqueezy
     public static function products(): ProductResource
     {
         return new ProductResource();
+    }
+    public static function variants(): VariantResource
+    {
+        return new VariantResource();
     }
 
 }
