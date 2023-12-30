@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avgkudey\LemonSqueezy;
 
+use Avgkudey\LemonSqueezy\Resources\CheckoutResource;
 use Avgkudey\LemonSqueezy\Resources\CustomerResource;
 use Avgkudey\LemonSqueezy\Resources\OrderResource;
 use Avgkudey\LemonSqueezy\Resources\ProductResource;
@@ -36,6 +37,9 @@ class LemonSqueezy
     public static function variants(): VariantResource
     {
         return new VariantResource();
+    }   public static function checkouts(): CheckoutResource
+    {
+        return new CheckoutResource();
     }
 
 }
