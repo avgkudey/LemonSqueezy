@@ -15,7 +15,7 @@ final readonly class CheckoutAttributes
         public ProductOptions|null $product_options,
         public CheckoutOptions|null $checkout_options,
         public CheckoutData|null $checkout_data,
-        public CheckoutPreview|null $preview,
+        public CheckoutPreview|bool|null $preview,
         public DateTimeImmutable|null $expires_at,
         public DateTimeImmutable $created_at,
         public DateTimeImmutable $updated_at,

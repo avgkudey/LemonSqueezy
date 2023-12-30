@@ -6,14 +6,19 @@ namespace Avgkudey\LemonSqueezy\Resources;
 
 use Avgkudey\LemonSqueezy\DataObjects\Checkout\Checkout;
 use Avgkudey\LemonSqueezy\DataObjects\Variant\Variant;
-use Avgkudey\LemonSqueezy\Exceptions\Product\FailedToFindProductException;
-use Avgkudey\LemonSqueezy\Exceptions\Variant\FailedToFetchAllVariantsException;
-use Avgkudey\LemonSqueezy\Exceptions\Variant\FailedToFindVariantException;
+use Avgkudey\LemonSqueezy\Enums\HTTP_METHOD;
+use Avgkudey\LemonSqueezy\Exceptions\Checkout\FailedToCreateCheckoutException;
+use Avgkudey\LemonSqueezy\Exceptions\Checkout\FailedToFetchAllCheckoutsException;
+use Avgkudey\LemonSqueezy\Exceptions\Checkout\FailedToFindCheckoutException;
+use Avgkudey\LemonSqueezy\Resources\Concerns\Checkout\CanUseCheckoutHelpers;
 use Exception;
 use Throwable;
 
 final class CheckoutResource extends BaseResource
 {
+    use CanUseCheckoutHelpers;
+
+
     /**
      * @param array<string,array<string,mixed>> $data
      * @return Checkout
@@ -23,19 +28,18 @@ final class CheckoutResource extends BaseResource
         return Checkout::fromResponse(data: $data);
     }
 
-    public function failedToFindException(Throwable $exception): FailedToFindVariantException
+    public function failedToFindException(Throwable $exception): FailedToFindCheckoutException
     {
-        return new FailedToFindVariantException(
+        return new FailedToFindCheckoutException(
             message: 'Failed to find checkout',
             code: $exception->getCode(),
             previous: $exception
         );
     }
 
-    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllVariantsException
+    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllCheckoutsException
     {
-        dd($exception->getMessage());
-        return new FailedToFetchAllVariantsException(
+        return new FailedToFetchAllCheckoutsException(
             message: "Failed to fetch all checkouts",
             code: $exception->getCode(),
             previous: $exception
@@ -45,7 +49,7 @@ final class CheckoutResource extends BaseResource
     /**
      * @param int|string $id
      * @return Variant|null
-     * @throws FailedToFindProductException
+     * @throws FailedToFindCheckoutException
      * @throws Exception
      */
 
@@ -54,8 +58,85 @@ final class CheckoutResource extends BaseResource
         return parent::find($id);
     }
 
+
+    /**
+     * @param int|string $variant
+     * @return Checkout|null
+     * @throws FailedToCreateCheckoutException
+     */
+    public function create(int|string $variant): Checkout|null
+    {
+        try {
+            $response = $this->buildRequest(
+                METHOD: HTTP_METHOD::POST->value,
+                URI: $this->endPoint(),
+                PAYLOAD: [
+                    'data' => [
+                        'type' => 'checkouts',
+                        'attributes' => [
+                            'custom_price' => '',
+                            'checkout_data' => array_filter(array:$this->checkout_data, callback: fn($value) => ! ('' === $value || null === $value)),
+                            'checkout_options' => array_filter(array:$this->checkout_options, callback: fn($value) => null !== $value) ,
+                            'expires_at' => null
+
+                        ],
+                        'relationships' => [
+                            'store' => [
+                                'data' => [
+                                    'type' => 'stores',
+                                    'id' => config('lemon-squeezy.storeId')
+                                ]
+                            ],
+                            'variant' => [
+                                'data' => [
+                                    'type' => 'variants',
+                                    'id' => (string)$variant
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            );
+            $decoded = $this->decodeResponse(response: $response);
+            if (isset($decoded['errors'])) {
+                if ( ! $this->throw_exceptions) {
+                    return null;
+                }
+
+                throw new FailedToCreateCheckoutException(
+                    message: $decoded['errors'][0]['detail'],
+                    code: (int)$decoded['errors'][0]['status']
+                );
+
+            }
+
+            return $this->createDataObject($decoded['data']);
+        } catch (Throwable $exception) {
+            if ( ! $this->throw_exceptions) {
+                return null;
+            }
+
+            if ($exception instanceof FailedToCreateCheckoutException) {
+                throw $exception;
+            }
+
+            throw new FailedToCreateCheckoutException(
+                message: 'Failed to create checkout',
+                code: $exception->getCode(),
+                previous: $exception
+            );
+        }
+
+    }
+
+
+
+
+
+
+
     protected function endPoint(): string
     {
-        return 'variants';
+        return 'checkouts';
     }
 }
