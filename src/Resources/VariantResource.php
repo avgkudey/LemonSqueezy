@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Avgkudey\LemonSqueezy\Resources;
 
 use Avgkudey\LemonSqueezy\DataObjects\Variant\Variant;
-use Avgkudey\LemonSqueezy\Exceptions\Product\FailedToFetchAllProductsException;
 use Avgkudey\LemonSqueezy\Exceptions\Product\FailedToFindProductException;
+use Avgkudey\LemonSqueezy\Exceptions\Variant\FailedToFetchAllVariantsException;
+use Avgkudey\LemonSqueezy\Exceptions\Variant\FailedToFindVariantException;
 use Exception;
 use Throwable;
 
@@ -21,19 +22,19 @@ final class VariantResource extends BaseResource
         return Variant::fromResponse(data: $data);
     }
 
-    public function failedToFindException(Throwable $exception): FailedToFindProductException
+    public function failedToFindException(Throwable $exception): FailedToFindVariantException
     {
-        return new FailedToFindProductException(
-            message: 'Failed to find product',
+        return new FailedToFindVariantException(
+            message: 'Failed to find variant',
             code: $exception->getCode(),
             previous: $exception
         );
     }
 
-    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllProductsException
+    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllVariantsException
     {
-        return new FailedToFetchAllProductsException(
-            message: "Failed to fetch all products",
+        return new FailedToFetchAllVariantsException(
+            message: "Failed to fetch all variants",
             code: $exception->getCode(),
             previous: $exception
         );
