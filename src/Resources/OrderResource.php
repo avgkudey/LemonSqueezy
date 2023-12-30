@@ -8,7 +8,6 @@ use Avgkudey\LemonSqueezy\DataObjects\Order\Order;
 use Avgkudey\LemonSqueezy\Exceptions\Order\FailedToFetchAllOrdersException;
 use Avgkudey\LemonSqueezy\Exceptions\Order\FailedToFindOrderException;
 use Exception;
-use Override;
 use Throwable;
 
 final class OrderResource extends BaseResource
@@ -47,7 +46,7 @@ final class OrderResource extends BaseResource
      * @throws FailedToFindOrderException
      * @throws Exception
      */
-    #[Override]
+
     public function find(int|string $id): Order|null
     {
         return parent::find($id);

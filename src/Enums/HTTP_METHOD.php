@@ -8,5 +8,6 @@ enum HTTP_METHOD: string
 {
     case GET = 'get';
     case POST = 'post';
+    case PATCH = 'patch';
 
 }
