@@ -75,7 +75,7 @@
                 "method_private_static",
                 "method_private"
             ],
-            "sort_algorithm": "none"
+            "sort_algorithm": "alpha"
         }
     }
 }

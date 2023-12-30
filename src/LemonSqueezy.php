@@ -15,31 +15,52 @@ class LemonSqueezy
 {
     public const VERSION = '1.0.0';
 
-    public static function stores(): StoreResource
+    /**
+     * @return CheckoutResource
+     */
+    public static function checkouts(): CheckoutResource
     {
-        return new StoreResource();
+        return new CheckoutResource();
     }
 
-    public static function orders(): OrderResource
-    {
-        return new OrderResource();
-    }
-
+    /**
+     * @return CustomerResource
+     */
     public static function customers(): CustomerResource
     {
         return new CustomerResource();
     }
 
+    /**
+     * @return OrderResource
+     */
+    public static function orders(): OrderResource
+    {
+        return new OrderResource();
+    }
+
+    /**
+     * @return ProductResource
+     */
     public static function products(): ProductResource
     {
         return new ProductResource();
     }
+
+    /**
+     * @return StoreResource
+     */
+    public static function stores(): StoreResource
+    {
+        return new StoreResource();
+    }
+
+    /**
+     * @return VariantResource
+     */
     public static function variants(): VariantResource
     {
         return new VariantResource();
-    }   public static function checkouts(): CheckoutResource
-    {
-        return new CheckoutResource();
     }
 
 }

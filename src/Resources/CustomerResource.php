@@ -97,6 +97,44 @@ final class CustomerResource extends BaseResource
     }
 
     /**
+     * @param Throwable $exception
+     * @return FailedToFetchAllCustomersException
+     */
+    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllCustomersException
+    {
+        return new FailedToFetchAllCustomersException(
+            message: "Failed to fetch all customers",
+            code: $exception->getCode(),
+            previous: $exception
+        );
+    }
+
+    /**
+     * @param Throwable $exception
+     * @return FailedToFindCustomerException
+     */
+    public function failedToFindException(Throwable $exception): FailedToFindCustomerException
+    {
+        return new FailedToFindCustomerException(
+            message: 'Failed to find customer',
+            code: $exception->getCode(),
+            previous: $exception
+        );
+    }
+
+    /**
+     * @param int|string $id
+     * @return Customer|null
+     * @throws FailedToFindCustomerException
+     * @throws Exception
+     */
+
+    public function find(int|string $id): Customer|null
+    {
+        return parent::find($id);
+    }
+
+    /**
      * @param int|string $id
      * @param array{
      *     name:string,
@@ -159,44 +197,6 @@ final class CustomerResource extends BaseResource
             );
         }
 
-    }
-
-    /**
-     * @param Throwable $exception
-     * @return FailedToFindCustomerException
-     */
-    public function failedToFindException(Throwable $exception): FailedToFindCustomerException
-    {
-        return new FailedToFindCustomerException(
-            message: 'Failed to find customer',
-            code: $exception->getCode(),
-            previous: $exception
-        );
-    }
-
-    /**
-     * @param Throwable $exception
-     * @return FailedToFetchAllCustomersException
-     */
-    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllCustomersException
-    {
-        return new FailedToFetchAllCustomersException(
-            message: "Failed to fetch all customers",
-            code: $exception->getCode(),
-            previous: $exception
-        );
-    }
-
-    /**
-     * @param int|string $id
-     * @return Customer|null
-     * @throws FailedToFindCustomerException
-     * @throws Exception
-     */
-
-    public function find(int|string $id): Customer|null
-    {
-        return parent::find($id);
     }
 
     /**

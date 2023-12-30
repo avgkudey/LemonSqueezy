@@ -6,6 +6,25 @@ namespace Avgkudey\LemonSqueezy\DataObjects\Product;
 
 final readonly class ProductAttributes
 {
+    /**
+     * @param int|string $store_id
+     * @param string $name
+     * @param string $slug
+     * @param string|null $description
+     * @param string $status
+     * @param string $status_formatted
+     * @param string|null $thumb_url
+     * @param string|null $large_thumb_url
+     * @param float $price
+     * @param string $price_formatted
+     * @param float|null $from_price
+     * @param float|null $to_price
+     * @param bool $pay_what_you_want
+     * @param string $buy_now_url
+     * @param string $created_at
+     * @param string $updated_at
+     * @param bool $test_mode
+     */
     public function __construct(
         public int|string  $store_id,
         public string      $name,

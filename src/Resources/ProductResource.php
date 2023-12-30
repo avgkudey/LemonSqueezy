@@ -21,19 +21,27 @@ final class ProductResource extends BaseResource
         return Product::fromResponse(data: $data);
     }
 
-    public function failedToFindException(Throwable $exception): FailedToFindProductException
+    /**
+     * @param Throwable $exception
+     * @return FailedToFetchAllProductsException
+     */
+    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllProductsException
     {
-        return new FailedToFindProductException(
-            message: 'Failed to find product',
+        return new FailedToFetchAllProductsException(
+            message: "Failed to fetch all products",
             code: $exception->getCode(),
             previous: $exception
         );
     }
 
-    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllProductsException
+    /**
+     * @param Throwable $exception
+     * @return FailedToFindProductException
+     */
+    public function failedToFindException(Throwable $exception): FailedToFindProductException
     {
-        return new FailedToFetchAllProductsException(
-            message: "Failed to fetch all products",
+        return new FailedToFindProductException(
+            message: 'Failed to find product',
             code: $exception->getCode(),
             previous: $exception
         );
@@ -51,6 +59,9 @@ final class ProductResource extends BaseResource
         return parent::find($id);
     }
 
+    /**
+     * @return string
+     */
     protected function endPoint(): string
     {
         return 'products';

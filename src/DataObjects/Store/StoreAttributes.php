@@ -8,6 +8,23 @@ use DateTimeImmutable;
 
 final readonly class StoreAttributes
 {
+    /**
+     * @param string $name
+     * @param string $slug
+     * @param string $domain
+     * @param string $url
+     * @param string $avatar_url
+     * @param string $plan
+     * @param string $country
+     * @param string $country_nicename
+     * @param string $currency
+     * @param int $total_sales
+     * @param float|int|null $total_revenue
+     * @param float|int|null $thirty_day_sales
+     * @param float|int|null $thirty_day_revenue
+     * @param DateTimeImmutable $created_at
+     * @param DateTimeImmutable $updated_at
+     */
     public function __construct(
         public string            $name,
         public string            $slug,

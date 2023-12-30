@@ -8,6 +8,12 @@ use League\ObjectMapper\MapFrom;
 
 final readonly class CustomerRelationships
 {
+    /**
+     * @param CustomerRelationshipLink $store
+     * @param CustomerRelationshipLink $orders
+     * @param CustomerRelationshipLink $subscriptions
+     * @param CustomerRelationshipLink $license_keys
+     */
     public function __construct(
         public CustomerRelationshipLink $store,
         public CustomerRelationshipLink $orders,

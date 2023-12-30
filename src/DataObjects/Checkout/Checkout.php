@@ -11,6 +11,11 @@ final readonly class Checkout implements DataObjectContract
 {
     use CanBeHydrated;
 
+    /**
+     * @param string $type
+     * @param string|int $id
+     * @param CheckoutAttributes $attributes
+     */
     public function __construct(
         public string $type,
         public string|int $id,

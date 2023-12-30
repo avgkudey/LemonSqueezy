@@ -20,46 +20,6 @@ final class CheckoutResource extends BaseResource
 
 
     /**
-     * @param array<string,array<string,mixed>> $data
-     * @return Checkout
-     */
-    public function createDataObject(array $data): Checkout
-    {
-        return Checkout::fromResponse(data: $data);
-    }
-
-    public function failedToFindException(Throwable $exception): FailedToFindCheckoutException
-    {
-        return new FailedToFindCheckoutException(
-            message: 'Failed to find checkout',
-            code: $exception->getCode(),
-            previous: $exception
-        );
-    }
-
-    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllCheckoutsException
-    {
-        return new FailedToFetchAllCheckoutsException(
-            message: "Failed to fetch all checkouts",
-            code: $exception->getCode(),
-            previous: $exception
-        );
-    }
-
-    /**
-     * @param int|string $id
-     * @return Variant|null
-     * @throws FailedToFindCheckoutException
-     * @throws Exception
-     */
-
-    public function find(int|string $id): Variant|null
-    {
-        return parent::find($id);
-    }
-
-
-    /**
      * @param int|string $variant
      * @return Checkout|null
      * @throws FailedToCreateCheckoutException
@@ -127,6 +87,54 @@ final class CheckoutResource extends BaseResource
             );
         }
 
+    }
+
+
+    /**
+     * @param array<string,array<string,mixed>> $data
+     * @return Checkout
+     */
+    public function createDataObject(array $data): Checkout
+    {
+        return Checkout::fromResponse(data: $data);
+    }
+
+    /**
+     * @param Throwable $exception
+     * @return FailedToFetchAllCheckoutsException
+     */
+    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllCheckoutsException
+    {
+        return new FailedToFetchAllCheckoutsException(
+            message: "Failed to fetch all checkouts",
+            code: $exception->getCode(),
+            previous: $exception
+        );
+    }
+
+    /**
+     * @param Throwable $exception
+     * @return FailedToFindCheckoutException
+     */
+    public function failedToFindException(Throwable $exception): FailedToFindCheckoutException
+    {
+        return new FailedToFindCheckoutException(
+            message: 'Failed to find checkout',
+            code: $exception->getCode(),
+            previous: $exception
+        );
+    }
+
+    /**
+     * @param int|string $id
+     * @return Variant|null
+     * @throws FailedToFindCheckoutException
+     * @throws Exception
+     */
+
+    public function find(int|string $id): Variant|null
+    {
+        return parent::find($id);
     }
 
 

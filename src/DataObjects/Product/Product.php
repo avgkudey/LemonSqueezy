@@ -11,6 +11,11 @@ final readonly class Product implements DataObjectContract
 {
     use CanBeHydrated;
 
+    /**
+     * @param string $type
+     * @param string|int $id
+     * @param ProductAttributes $attributes
+     */
     public function __construct(
         public string            $type,
         public string|int        $id,

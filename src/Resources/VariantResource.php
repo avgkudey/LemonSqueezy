@@ -21,19 +21,27 @@ final class VariantResource extends BaseResource
         return Variant::fromResponse(data: $data);
     }
 
-    public function failedToFindException(Throwable $exception): FailedToFindVariantException
+    /**
+     * @param Throwable $exception
+     * @return FailedToFetchAllVariantsException
+     */
+    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllVariantsException
     {
-        return new FailedToFindVariantException(
-            message: 'Failed to find variant',
+        return new FailedToFetchAllVariantsException(
+            message: "Failed to fetch all variants",
             code: $exception->getCode(),
             previous: $exception
         );
     }
 
-    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllVariantsException
+    /**
+     * @param Throwable $exception
+     * @return FailedToFindVariantException
+     */
+    public function failedToFindException(Throwable $exception): FailedToFindVariantException
     {
-        return new FailedToFetchAllVariantsException(
-            message: "Failed to fetch all variants",
+        return new FailedToFindVariantException(
+            message: 'Failed to find variant',
             code: $exception->getCode(),
             previous: $exception
         );
@@ -51,6 +59,9 @@ final class VariantResource extends BaseResource
         return parent::find($id);
     }
 
+    /**
+     * @return string
+     */
     protected function endPoint(): string
     {
         return 'variants';

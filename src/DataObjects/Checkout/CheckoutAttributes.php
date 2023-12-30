@@ -8,6 +8,20 @@ use DateTimeImmutable;
 
 final readonly class CheckoutAttributes
 {
+    /**
+     * @param string|int|null $store_id
+     * @param string|int|null $variant_id
+     * @param int|null $custom_price
+     * @param ProductOptions|null $product_options
+     * @param CheckoutOptions|null $checkout_options
+     * @param CheckoutData|null $checkout_data
+     * @param CheckoutPreview|bool|null $preview
+     * @param DateTimeImmutable|null $expires_at
+     * @param DateTimeImmutable $created_at
+     * @param DateTimeImmutable $updated_at
+     * @param bool $test_mode
+     * @param string|null $url
+     */
     public function __construct(
         public string|int|null $store_id,
         public string|int|null $variant_id,

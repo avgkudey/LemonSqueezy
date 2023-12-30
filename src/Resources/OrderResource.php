@@ -21,20 +21,20 @@ final class OrderResource extends BaseResource
         return Order::fromResponse(data: $data);
     }
 
-
-    public function failedToFindException(Throwable $exception): FailedToFindOrderException
+    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllOrdersException
     {
-        return new FailedToFindOrderException(
-            message: 'Failed to find order',
+        return new FailedToFetchAllOrdersException(
+            message: "Failed to fetch all orders",
             code: $exception->getCode(),
             previous: $exception
         );
     }
 
-    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllOrdersException
+
+    public function failedToFindException(Throwable $exception): FailedToFindOrderException
     {
-        return new FailedToFetchAllOrdersException(
-            message: "Failed to fetch all orders",
+        return new FailedToFindOrderException(
+            message: 'Failed to find order',
             code: $exception->getCode(),
             previous: $exception
         );
@@ -52,6 +52,9 @@ final class OrderResource extends BaseResource
         return parent::find($id);
     }
 
+    /**
+     * @return string
+     */
     protected function endPoint(): string
     {
         return 'orders';

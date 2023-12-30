@@ -8,6 +8,10 @@ use Illuminate\Support\ServiceProvider;
 
 class LemonSqueezyServiceProvider extends ServiceProvider
 {
+    public function boot(): void
+    {
+        $this->bootPublishing();
+    }
     public function register(): void
     {
         $this->mergeConfigFrom(
@@ -15,11 +19,6 @@ class LemonSqueezyServiceProvider extends ServiceProvider
             'lemon-squeezy'
         );
 
-    }
-
-    public function boot(): void
-    {
-        $this->bootPublishing();
     }
 
     protected function bootPublishing(): void

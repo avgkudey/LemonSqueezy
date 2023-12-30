@@ -10,9 +10,9 @@ trait CanBeHydrated
 {
     /**
      * @param array<string,mixed> $data
-     * @return self
+     * @return static
      */
-    public static function fromResponse(array $data): self
+    public static function fromResponse(array $data): static
     {
         $mapper = new ObjectMapperUsingReflection();
         return $mapper->hydrateObject(className: self::class, payload: $data);

@@ -21,19 +21,27 @@ final class StoreResource extends BaseResource
         return Store::fromResponse(data: $data);
     }
 
-    public function failedToFindException(Throwable $exception): FailedToFindStoreException
+    /**
+     * @param Throwable $exception
+     * @return FailedToFetchAllStoresException
+     */
+    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllStoresException
     {
-        return new FailedToFindStoreException(
-            message: 'Failed to find store',
+        return new FailedToFetchAllStoresException(
+            message: "Failed to fetch all stores",
             code: $exception->getCode(),
             previous: $exception
         );
     }
 
-    public function failedToFetchAllException(Throwable $exception): FailedToFetchAllStoresException
+    /**
+     * @param Throwable $exception
+     * @return FailedToFindStoreException
+     */
+    public function failedToFindException(Throwable $exception): FailedToFindStoreException
     {
-        return new FailedToFetchAllStoresException(
-            message: "Failed to fetch all stores",
+        return new FailedToFindStoreException(
+            message: 'Failed to find store',
             code: $exception->getCode(),
             previous: $exception
         );
@@ -51,6 +59,9 @@ final class StoreResource extends BaseResource
         return parent::find($id);
     }
 
+    /**
+     * @return string
+     */
     protected function endPoint(): string
     {
         return 'stores';

@@ -6,6 +6,22 @@ namespace Avgkudey\LemonSqueezy\DataObjects\Checkout;
 
 final readonly class CheckoutPreview
 {
+    /**
+     * @param string $currency
+     * @param int $currency_rate
+     * @param int $subtotal
+     * @param int $discount_total
+     * @param int $tax
+     * @param int $total
+     * @param int $subtotal_usd
+     * @param int $discount_total_usd
+     * @param int $tax_usd
+     * @param int $total_usd
+     * @param string $subtotal_formatted
+     * @param string $discount_total_formatted
+     * @param string $tax_formatted
+     * @param string $total_formatted
+     */
     public function __construct(
         public string $currency,
         public int $currency_rate,
