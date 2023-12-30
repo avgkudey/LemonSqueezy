@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avgkudey\LemonSqueezy\Resources;
 
 use Avgkudey\LemonSqueezy\DataObjects\Variant\Variant;
-use Avgkudey\LemonSqueezy\Exceptions\Product\FailedToFindProductException;
 use Avgkudey\LemonSqueezy\Exceptions\Variant\FailedToFetchAllVariantsException;
 use Avgkudey\LemonSqueezy\Exceptions\Variant\FailedToFindVariantException;
 use Exception;
@@ -43,7 +42,7 @@ final class VariantResource extends BaseResource
     /**
      * @param int|string $id
      * @return Variant|null
-     * @throws FailedToFindProductException
+     * @throws FailedToFindVariantException
      * @throws Exception
      */
 
