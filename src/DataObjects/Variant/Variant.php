@@ -22,4 +22,3 @@ final readonly class Variant implements DataObjectContract
         public VariantAttributes $attributes
     ) {}
 }
-

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avgkudey\LemonSqueezy\Resources;
 
-use Avgkudey\LemonSqueezy\DataObjects\Product\Product;
 use Avgkudey\LemonSqueezy\DataObjects\Variant\Variant;
 use Avgkudey\LemonSqueezy\Exceptions\Product\FailedToFetchAllProductsException;
 use Avgkudey\LemonSqueezy\Exceptions\Product\FailedToFindProductException;
