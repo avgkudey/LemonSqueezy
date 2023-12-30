@@ -13,7 +13,7 @@ use Throwable;
 final class VariantResource extends BaseResource
 {
     /**
-     * @param array<string,array<string,mixed>> $data
+     * @param array<int,array<int,mixed>> $data
      * @return Variant
      */
     public function createDataObject(array $data): Variant

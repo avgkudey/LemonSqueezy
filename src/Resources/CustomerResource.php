@@ -88,7 +88,7 @@ final class CustomerResource extends BaseResource
     }
 
     /**
-     * @param array<string,array<string,mixed>> $data
+     * @param array<int,array<int,mixed>> $data
      * @return Customer
      */
     public function createDataObject(array $data): Customer

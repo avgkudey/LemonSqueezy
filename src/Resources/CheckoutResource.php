@@ -91,7 +91,7 @@ final class CheckoutResource extends BaseResource
 
 
     /**
-     * @param array<string,array<string,mixed>> $data
+     * @param array<int,array<int,mixed>> $data
      * @return Checkout
      */
     public function createDataObject(array $data): Checkout

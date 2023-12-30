@@ -13,7 +13,7 @@ use Throwable;
 final class ProductResource extends BaseResource
 {
     /**
-     * @param array<string,array<string,mixed>> $data
+     * @param array<int,array<int,mixed>> $data
      * @return Product
      */
     public function createDataObject(array $data): Product
