@@ -16,7 +16,7 @@ trait CanManageCustomer
         } else {
             $customer = LemonSqueezy::customers()->where('email', $this->email)->get()->first();
             if ($customer) {
-                $this->lesmon_squeezy_id = $customer->id;
+                $this->lemon_squeezy_id = $customer->id;
                 $this->save();
             }
         }
