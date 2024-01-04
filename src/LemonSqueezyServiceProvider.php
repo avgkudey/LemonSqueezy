@@ -27,6 +27,11 @@ class LemonSqueezyServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../config/lemon-squeezy.php' => $this->app->configPath('lemon-squeezy.php'),
             ], 'lemon-squeezy-config');
+
+            $this->publishes([
+                __DIR__ . '/../database/migrations' => $this->app->databasePath('migrations'),
+            ], 'lemon-squeezy-migrations');
+
         }
     }
 }
