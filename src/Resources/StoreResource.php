@@ -8,6 +8,7 @@ use Avgkudey\LemonSqueezy\DataObjects\Store\Store;
 use Avgkudey\LemonSqueezy\Exceptions\Store\FailedToFetchAllStoresException;
 use Avgkudey\LemonSqueezy\Exceptions\Store\FailedToFindStoreException;
 use Exception;
+use Override;
 use Throwable;
 
 final class StoreResource extends BaseResource
@@ -54,6 +55,7 @@ final class StoreResource extends BaseResource
      * @throws Exception
      */
 
+    #[Override]
     public function find(int|string $id): Store|null
     {
         return parent::find($id);

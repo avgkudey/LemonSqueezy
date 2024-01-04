@@ -6,6 +6,7 @@ namespace Avgkudey\LemonSqueezy;
 
 use Avgkudey\LemonSqueezy\Resources\CheckoutResource;
 use Avgkudey\LemonSqueezy\Resources\CustomerResource;
+use Avgkudey\LemonSqueezy\Resources\DiscountResource;
 use Avgkudey\LemonSqueezy\Resources\OrderResource;
 use Avgkudey\LemonSqueezy\Resources\ProductResource;
 use Avgkudey\LemonSqueezy\Resources\StoreResource;
@@ -29,6 +30,14 @@ class LemonSqueezy
     public static function customers(): CustomerResource
     {
         return new CustomerResource();
+    }
+
+    /**
+     * @return DiscountResource
+     */
+    public static function discounts(): DiscountResource
+    {
+        return new DiscountResource();
     }
 
     /**
