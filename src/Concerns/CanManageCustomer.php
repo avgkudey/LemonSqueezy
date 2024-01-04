@@ -13,6 +13,12 @@ trait CanManageCustomer
         $customer = null;
         if ($this->lemonSqueezyId()) {
             $customer = LemonSqueezy::customers()->find($this->lemonSqueezyId());
+        } else {
+            $customer = LemonSqueezy::customers()->where('email', $this->email)->get()->first();
+            if ($customer) {
+                $this->lesmon_squeezy_id = $customer->id;
+                $this->save();
+            }
         }
 
         if(null === $customer) {
